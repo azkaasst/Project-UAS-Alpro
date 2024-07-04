@@ -1,0 +1,48 @@
+import javax.swing.*;
+import java.awt.*;
+import java.text.DecimalFormat;
+
+public class OrderSummary extends JFrame {
+    public OrderSummary(String orderDetails) {
+        setTitle("Order Summary");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        JTextArea orderTextArea = new JTextArea(10, 30);
+        orderTextArea.setEditable(false);
+        orderTextArea.setText(orderDetails);
+        add(new JScrollPane(orderTextArea), BorderLayout.CENTER);
+
+        // Hitung total harga dari pesanan
+        double total = calculateTotal(orderDetails);
+        JLabel totalLabel = new JLabel("Total Price: $" + new DecimalFormat("#.##").format(total));
+        add(totalLabel, BorderLayout.SOUTH);
+
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    // Method untuk menghitung total harga dari pesanan
+    private double calculateTotal(String orderDetails) {
+        double total = 0;
+        String[] lines = orderDetails.split("\n");
+        for (String line : lines) {
+            String[] parts = line.split(" - \\$");
+            if (parts.length == 2) {
+                double price = Double.parseDouble(parts[1]);
+                total += price;
+            }
+        }
+        return total;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                String orderDetails = "Nasi Ayam Geprek (Qty: 2) - $40000\nIndomie Goreng (Qty: 1) - $13000\n\nTotal: $53000";
+                new OrderSummary(orderDetails);
+            }
+        });
+    }
+}
