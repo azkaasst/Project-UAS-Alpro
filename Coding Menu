@@ -1,0 +1,152 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.table.TableColumnModel;
+
+
+public class CoffeeShopMenu extends JFrame {
+    private DefaultTableModel mainCourseModel, snackModel, coffeeModel, nonCoffeeModel;
+
+    public CoffeeShopMenu() {
+        // Panel utama untuk menu dan judul
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        // Label "Welcome to DoubleShot Coffee" dengan garis
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        JLabel titleLabel = new JLabel("WELCOME TO DOUBLESHOT COFFEE");
+        titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 24)); // Besarkan font dan tebalkan
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER); // Pusatkan teks
+        titlePanel.add(titleLabel, BorderLayout.NORTH);
+        JSeparator separator = new JSeparator();
+        titlePanel.add(separator, BorderLayout.CENTER); // Tambahkan garis di bawah label
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
+
+        // Panel untuk menu
+        JPanel menuPanel = new JPanel(new GridLayout(2, 2));
+
+        // Tabel menu Main Course
+        mainCourseModel = new DefaultTableModel(new String[]{"Item", "Price"}, 0);
+        addMenuItem(mainCourseModel, "Nasi Ayam Geprek", 20000);
+        addMenuItem(mainCourseModel, "Nasi Goreng", 15000);
+        addMenuItem(mainCourseModel, "Indomie Goreng", 13000);
+        addMenuItem(mainCourseModel, "Indomie Rebus", 13000);
+        addMenuItem(mainCourseModel, "Spaghetti", 18000);
+        JTable mainCourseTable = new JTable(mainCourseModel);
+        customizeTable(mainCourseTable);
+        JScrollPane mainCourseScrollPane = new JScrollPane(mainCourseTable);
+        JPanel mainCoursePanel = createCategoryPanel("Main Course", mainCourseScrollPane);
+        menuPanel.add(mainCoursePanel);
+
+        // Tabel menu Snack
+        snackModel = new DefaultTableModel(new String[]{"Item", "Price"}, 0);
+        addMenuItem(snackModel, "Tahu Lada Garam", 10000);
+        addMenuItem(snackModel, "Kentang Goreng", 10000);
+        addMenuItem(snackModel, "Sosis Bakar", 10000);
+        addMenuItem(snackModel, "Kentang + Sosis", 15000);
+        addMenuItem(snackModel, "Pisang Goreng", 10000);
+        addMenuItem(snackModel, "Gorengan", 10000);
+        addMenuItem(snackModel, "Roti Kukus", 5000);
+        addMenuItem(snackModel, "Roti Bakar", 5000);
+        JTable snackTable = new JTable(snackModel);
+        customizeTable(snackTable);
+        JScrollPane snackScrollPane = new JScrollPane(snackTable);
+        JPanel snackPanel = createCategoryPanel("Snack", snackScrollPane);
+        menuPanel.add(snackPanel);
+
+        // Tabel menu Coffee
+        coffeeModel = new DefaultTableModel(new String[]{"Item", "Price"}, 0);
+        addMenuItem(coffeeModel, "Cappucino", 15000);
+        addMenuItem(coffeeModel, "Americano", 15000);
+        addMenuItem(coffeeModel, "Espresso", 10000);
+        addMenuItem(coffeeModel, "Vietnam Drip", 15000);
+        addMenuItem(coffeeModel, "Ice Coffee Milk", 15000);
+        addMenuItem(coffeeModel, "Latte", 15000);
+        JTable coffeeTable = new JTable(coffeeModel);
+        customizeTable(coffeeTable);
+        JScrollPane coffeeScrollPane = new JScrollPane(coffeeTable);
+        JPanel coffeePanel = createCategoryPanel("Coffee", coffeeScrollPane);
+        menuPanel.add(coffeePanel);
+
+        // Tabel menu Non Coffee
+        nonCoffeeModel = new DefaultTableModel(new String[]{"Item", "Price"}, 0);
+        addMenuItem(nonCoffeeModel, "Ice Tea", 10000);
+        addMenuItem(nonCoffeeModel, "Ice Lemon Tea", 10000);
+        addMenuItem(nonCoffeeModel, "Matcha", 15000);
+        addMenuItem(nonCoffeeModel, "Orange Juice", 10000);
+        addMenuItem(nonCoffeeModel, "Mineral Water", 5000);
+        JTable nonCoffeeTable = new JTable(nonCoffeeModel);
+        customizeTable(nonCoffeeTable);
+        JScrollPane nonCoffeeScrollPane = new JScrollPane(nonCoffeeTable);
+        JPanel nonCoffeePanel = createCategoryPanel("Non Coffee", nonCoffeeScrollPane);
+        menuPanel.add(nonCoffeePanel);
+
+        mainPanel.add(menuPanel, BorderLayout.CENTER);
+        add(mainPanel, BorderLayout.CENTER);
+
+        // Button untuk halaman kedua
+        JButton nextButton = new JButton("Next");
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose(); // Menutup frame menu
+                new CoffeeShopKasir().setVisible(true); // Membuka frame kasir dan menampilkan
+            }
+        });
+        add(nextButton, BorderLayout.SOUTH);
+
+        pack();
+        setLocationRelativeTo(null); // Center the frame
+        setVisible(true);
+    }
+
+    // Method untuk menambahkan item ke dalam model tabel
+    private void addMenuItem(DefaultTableModel model, String itemName, int price) {
+        model.addRow(new Object[]{itemName, price});
+    }
+
+    // Method untuk membuat panel kategori
+    private JPanel createCategoryPanel(String category, JScrollPane scrollPane) {
+        JPanel panel = new JPanel(new BorderLayout());
+        JLabel categoryLabel = new JLabel(category);
+        categoryLabel.setFont(new Font(categoryLabel.getFont().getName(), Font.BOLD, 20)); // set bold and font size
+        categoryLabel.setHorizontalAlignment(SwingConstants.CENTER); // center the label text
+        panel.add(categoryLabel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        return panel;
+    }
+
+    // Customize table appearance
+    private void customizeTable(JTable table) {
+        table.getTableHeader().setFont(new Font(table.getFont().getName(), Font.BOLD, 20)); // Set font size for column headers
+        table.setFont(new Font(table.getFont().getName(), Font.PLAIN, 20)); // Set font size for table content
+
+        // Set row height to accommodate larger font size
+        table.setRowHeight(40);
+
+        // Set padding between rows
+        table.setIntercellSpacing(new Dimension(0, 10));
+
+        // Adjust column width to accommodate larger font size
+        TableColumnModel columnModel = table.getColumnModel();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            int width = 15; // Minimal width
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, column);
+                Component comp = table.prepareRenderer(renderer, row, column);
+                width = Math.max(comp.getPreferredSize().width + 1, width);
+            }
+            columnModel.getColumn(column).setPreferredWidth(width);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new CoffeeShopMenu();
+            }
+        });
+    }
+}
