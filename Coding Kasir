@@ -1,0 +1,139 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class CoffeeShopKasir extends JFrame {
+    private JComboBox<String> menuComboBox;
+    private JSpinner quantitySpinner;
+    private JTextArea orderTextArea;
+
+    private JButton nextButton; // Tombol "Next" untuk masuk ke halaman ketiga
+
+    // Daftar semua menu dari halaman pertama
+    private String[] mainCourseItems = {"Nasi Ayam Geprek", "Nasi Goreng", "Indomie Goreng", "Indomie Rebus", "Spaghetti"};
+    private double[] mainCoursePrices = {20000, 15000, 13000, 13000, 18000};
+
+    private String[] snackItems = {"Tahu Lada Garam", "Kentang Goreng", "Sosis Bakar", "Kentang + Sosis", "Pisang Goreng", "Gorengan", "Roti Kukus", "Roti Bakar"};
+    private double[] snackPrices = {10000, 10000, 10000, 15000, 10000, 10000, 5000, 5000};
+
+    private String[] coffeeItems = {"Cappucino", "Americano", "Espresso", "Vietnam Drip", "Ice Coffee Milk", "Latte"};
+    private double[] coffeePrices = {15000, 15000, 10000, 15000, 15000, 15000};
+
+    private String[] nonCoffeeItems = {"Ice Tea", "Ice Lemon Tea", "Matcha", "Orange Juice", "Mineral Water"};
+    private double[] nonCoffeePrices = {10000, 10000, 15000, 10000, 5000};
+
+    public CoffeeShopKasir() {
+        setTitle("Coffee Shop Kasir");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Panel untuk memilih menu dan input jumlah pesanan
+        JPanel inputPanel = new JPanel(new GridLayout(3, 1));
+
+        // Combo box untuk memilih menu
+        menuComboBox = new JComboBox<>();
+        // Menambahkan semua menu ke dalam combo box
+        for (String item : mainCourseItems)
+            menuComboBox.addItem(item);
+        for (String item : snackItems)
+            menuComboBox.addItem(item);
+        for (String item : coffeeItems)
+            menuComboBox.addItem(item);
+        for (String item : nonCoffeeItems)
+            menuComboBox.addItem(item);
+        inputPanel.add(menuComboBox);
+
+        // Spinner untuk memilih jumlah pesanan
+        SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, 100, 1);
+        quantitySpinner = new JSpinner(spinnerModel);
+        inputPanel.add(quantitySpinner);
+
+        // Button untuk menambahkan pesanan
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedItem = menuComboBox.getSelectedItem().toString();
+                int quantity = (int) quantitySpinner.getValue();
+                double price = getPrice(selectedItem);
+
+                addItemToOrder(selectedItem, quantity, price);
+            }
+        });
+        inputPanel.add(addButton);
+
+        // Text area untuk menampilkan pesanan
+        orderTextArea = new JTextArea(10, 30);
+        orderTextArea.setEditable(false);
+        inputPanel.add(new JScrollPane(orderTextArea));
+
+        // Button "Next" untuk masuk ke halaman ketiga
+        nextButton = new JButton("Next");
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                goToOrderSummaryPage(); // Panggil method untuk membuka halaman ketiga
+            }
+        });
+        inputPanel.add(nextButton);
+
+        add(inputPanel, BorderLayout.CENTER);
+
+        pack();
+        setLocationRelativeTo(null); // Center the frame
+        setVisible(true);
+    }
+
+    // Method untuk mendapatkan harga dari item yang dipilih
+    private double getPrice(String item) {
+        double price = 0;
+        // Mencari harga berdasarkan item yang dipilih
+        for (int i = 0; i < mainCourseItems.length; i++) {
+            if (mainCourseItems[i].equals(item)) {
+                price = mainCoursePrices[i];
+                break;
+            }
+        }
+        for (int i = 0; i < snackItems.length; i++) {
+            if (snackItems[i].equals(item)) {
+                price = snackPrices[i];
+                break;
+            }
+        }
+        for (int i = 0; i < coffeeItems.length; i++) {
+            if (coffeeItems[i].equals(item)) {
+                price = coffeePrices[i];
+                break;
+            }
+        }
+        for (int i = 0; i < nonCoffeeItems.length; i++) {
+            if (nonCoffeeItems[i].equals(item)) {
+                price = nonCoffeePrices[i];
+                break;
+            }
+        }
+        return price;
+    }
+
+    // Method untuk menambahkan item pesanan ke dalam text area
+    private void addItemToOrder(String item, int quantity, double price) {
+        orderTextArea.append(item + " (Qty: " + quantity + ") - $" + (price * quantity) + "\n");
+    }
+
+    // Method untuk membuka halaman ketiga
+    private void goToOrderSummaryPage() {
+        // Mengumpulkan pesanan ke dalam string
+        String orderDetails = orderTextArea.getText();
+        // Membuka halaman ketiga
+        new OrderSummary(orderDetails);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new CoffeeShopKasir();
+            }
+        });
+    }
+}
